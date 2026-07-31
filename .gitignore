@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+.env.*
+
+# FastAPI
+*.log
+
+# PostgreSQL
+*.sqlite3
+
+
+# Node
+node_modules/
+.next/
+out/
+
+# Mac
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
