@@ -6,10 +6,13 @@ The goal of this MVP is to aggregate a client's wealth across multiple banks and
 
 Current features:
 
-- Store clients
+- Store advisors
+- Store clients (linked to advisors)
 - Store financial institutions (banks)
 - Store bank accounts
 - Store investment positions
+- Advisor dashboard to view all managed clients
+- Client detail views with banks, accounts, and positions
 - REST API with FastAPI
 - PostgreSQL database
 - Next.js dashboard
@@ -62,6 +65,7 @@ wealth-mvp/
 │   │   └── main.py
 │   │
 │   ├── requirements.txt
+│   ├── seed_data.py
 │   └── .env
 │
 ├── frontend/
@@ -105,6 +109,14 @@ Run database migrations.
 ```bash
 alembic upgrade head
 ```
+
+Seed the database with sample data (optional).
+
+```bash
+python3 seed_data.py
+```
+
+This will create sample advisors, clients, banks, accounts, and positions for testing.
 
 Start the API.
 
@@ -183,17 +195,21 @@ npm run dev
 Current data model:
 
 ```
-Client
+Advisor
     │
-    ├── Institution (Bank)
+    ├── Client
             │
-            ├── Account
+            ├── Institution (Bank)
                     │
-                    ├── Position
+                    ├── Account
+                            │
+                            ├── Position
 ```
 
 Relationships:
 
+- An advisor manages many clients
+- A client belongs to one advisor
 - A client owns many institutions
 - An institution owns many accounts
 - An account owns many positions
@@ -203,6 +219,10 @@ Relationships:
 # Current API
 
 ```
+GET     /advisors
+POST    /advisors
+GET     /advisors/{id}/dashboard
+
 GET     /clients
 POST    /clients
 
@@ -219,10 +239,17 @@ Interactive API documentation is available via Swagger.
 
 ---
 
+# Frontend Routes
+
+```
+/                          - Home page (sample client dashboard)
+/advisor                   - Advisor dashboard (shows all managed clients)
+/advisor/client/{id}       - Client detail view (shows banks, accounts, positions)
+```
+
 # Roadmap
 
 - Authentication
-- Multi-client support
 - Bank integrations
 - Portfolio allocation
 - Performance analytics

@@ -7,6 +7,7 @@ from app.models.client import Client
 from app.models.bank import Bank
 from app.models.account import Account
 from app.models.position import Position
+from app.utils.auth import hash_password
 
 
 def seed_additional_data():
@@ -28,14 +29,23 @@ def seed_additional_data():
         # Delete clients (they depend on advisors)
         db.query(Client).delete()
         
+        # Delete advisors
+        db.query(Advisor).delete()
+        
         db.commit()
         print("✅ Cleaned up existing data")
         
-        # Get the first advisor (assuming there's at least one)
-        advisor = db.query(Advisor).first()
-        if not advisor:
-            print("No advisor found. Please create an advisor first.")
-            return
+        # Create a sample advisor
+        advisor = Advisor(
+            first_name="John",
+            last_name="Smith",
+            email="john.smith@example.com",
+            hashed_password=hash_password("password")
+        )
+        db.add(advisor)
+        db.flush()
+        
+        print(f"Created advisor: {advisor.first_name} {advisor.last_name}")
         
         # Create Jane Doe
         jane_doe = Client(
@@ -247,8 +257,12 @@ def seed_additional_data():
         
         db.commit()
         print("\n✅ Successfully seeded data!")
+        print(f"- Created advisor John Smith")
         print(f"- Created Jane Doe with 4 accounts across 3 banks")
         print(f"- Created Mister Agapitos with 4 accounts across 2 banks")
+        print(f"\nLogin credentials:")
+        print(f"Email: john.smith@example.com")
+        print(f"Password: password")
         
     except Exception as e:
         db.rollback()

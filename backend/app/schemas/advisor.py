@@ -8,7 +8,7 @@ class AdvisorBase(BaseModel):
 
 
 class AdvisorCreate(AdvisorBase):
-    pass
+    password: str
 
 
 class AdvisorRead(AdvisorBase):
@@ -16,3 +16,8 @@ class AdvisorRead(AdvisorBase):
 
     class Config:
         from_attributes = True
+
+
+class AdvisorLogin(BaseModel):
+    email: EmailStr
+    password: str
