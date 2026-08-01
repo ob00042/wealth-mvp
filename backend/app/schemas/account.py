@@ -2,20 +2,20 @@ from decimal import Decimal
 from pydantic import BaseModel
 
 
-class AccountCreate(BaseModel):
+class AccountBase(BaseModel):
     name: str
     account_type: str
     currency: str
     balance: Decimal
-    institution_id: int
+    bank_id: int
 
 
-class AccountResponse(BaseModel):
+class AccountCreate(AccountBase):
+    pass
+
+
+class AccountRead(AccountBase):
     id: int
-    name: str
-    account_type: str
-    currency: str
-    balance: Decimal
 
     class Config:
         from_attributes = True

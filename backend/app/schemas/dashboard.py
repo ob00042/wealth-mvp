@@ -18,7 +18,7 @@ class AccountDashboard(BaseModel):
     positions: list[PositionDashboard]
 
 
-class InstitutionDashboard(BaseModel):
+class BankDashboard(BaseModel):
     id: int
     name: str
     accounts: list[AccountDashboard]
@@ -26,6 +26,7 @@ class InstitutionDashboard(BaseModel):
 
 class ClientDashboard(BaseModel):
     id: int
-    name: str
+    first_name: str
+    last_name: str
     total_assets: Decimal
-    institutions: list[InstitutionDashboard]
+    banks: list[BankDashboard]

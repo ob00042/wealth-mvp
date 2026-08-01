@@ -29,14 +29,14 @@ class Account(Base):
         nullable=False
     )
 
-    institution_id = Column(
+    bank_id = Column(
         Integer,
-        ForeignKey("institutions.id"),
+        ForeignKey("banks.id"),
         nullable=False
     )
 
-    institution = relationship(
-        "Institution",
+    bank = relationship(
+        "Bank",
         back_populates="accounts"
     )
 

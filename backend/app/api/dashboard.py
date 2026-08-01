@@ -37,13 +37,13 @@ def get_dashboard(
 
     total_assets = Decimal("0")
 
-    institutions = []
+    banks = []
 
-    for institution in client.institutions:
+    for bank in client.banks:
 
         accounts = []
 
-        for account in institution.accounts:
+        for account in bank.accounts:
 
             total_assets += account.balance
 
@@ -73,17 +73,18 @@ def get_dashboard(
                 }
             )
 
-        institutions.append(
+        banks.append(
             {
-                "id": institution.id,
-                "name": institution.name,
+                "id": bank.id,
+                "name": bank.name,
                 "accounts": accounts
             }
         )
 
     return {
         "id": client.id,
-        "name": client.name,
+        "first_name": client.first_name,
+        "last_name": client.last_name,
         "total_assets": total_assets,
-        "institutions": institutions
+        "banks": banks
     }

@@ -1,13 +1,18 @@
 from pydantic import BaseModel
 
 
-class ClientCreate(BaseModel):
-    name: str
+class ClientBase(BaseModel):
+    first_name: str
+    last_name: str
+    advisor_id: int
 
 
-class ClientResponse(BaseModel):
+class ClientCreate(ClientBase):
+    pass
+
+
+class ClientRead(ClientBase):
     id: int
-    name: str
 
     class Config:
         from_attributes = True

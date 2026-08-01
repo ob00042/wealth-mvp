@@ -5,7 +5,7 @@ from app.db.database import get_db
 from app.models.position import Position
 from app.schemas.position import (
     PositionCreate,
-    PositionResponse
+    PositionRead
 )
 
 
@@ -17,7 +17,7 @@ router = APIRouter(
 
 @router.post(
     "",
-    response_model=PositionResponse
+    response_model=PositionRead
 )
 def create_position(
     position: PositionCreate,
@@ -37,7 +37,7 @@ def create_position(
 
 @router.get(
     "",
-    response_model=list[PositionResponse]
+    response_model=list[PositionRead]
 )
 def get_positions(
     db: Session = Depends(get_db)

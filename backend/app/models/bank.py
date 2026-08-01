@@ -4,8 +4,8 @@ from sqlalchemy.orm import relationship
 from app.db.database import Base
 
 
-class Institution(Base):
-    __tablename__ = "institutions"
+class Bank(Base):
+    __tablename__ = "banks"
 
     id = Column(Integer, primary_key=True)
 
@@ -22,10 +22,10 @@ class Institution(Base):
 
     client = relationship(
         "Client",
-        back_populates="institutions"
+        back_populates="banks"
     )
 
     accounts = relationship(
         "Account",
-        back_populates="institution"
+        back_populates="bank"
     )

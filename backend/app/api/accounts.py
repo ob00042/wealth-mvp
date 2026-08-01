@@ -5,7 +5,7 @@ from app.db.database import get_db
 from app.models.account import Account
 from app.schemas.account import (
     AccountCreate,
-    AccountResponse
+    AccountRead
 )
 
 
@@ -17,7 +17,7 @@ router = APIRouter(
 
 @router.post(
     "",
-    response_model=AccountResponse
+    response_model=AccountRead
 )
 def create_account(
     account: AccountCreate,
@@ -37,7 +37,7 @@ def create_account(
 
 @router.get(
     "",
-    response_model=list[AccountResponse]
+    response_model=list[AccountRead]
 )
 def get_accounts(
     db: Session = Depends(get_db)

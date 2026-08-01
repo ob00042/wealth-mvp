@@ -2,20 +2,22 @@ from decimal import Decimal
 from pydantic import BaseModel
 
 
-class PositionCreate(BaseModel):
+class PositionBase(BaseModel):
     security_name: str
+    ticker: str | None = None
+    asset_type: str | None = None
     quantity: Decimal
     market_value: Decimal
     currency: str
     account_id: int
 
 
-class PositionResponse(BaseModel):
+class PositionCreate(PositionBase):
+    pass
+
+
+class PositionRead(PositionBase):
     id: int
-    security_name: str
-    quantity: Decimal
-    market_value: Decimal
-    currency: str
 
     class Config:
         from_attributes = True
