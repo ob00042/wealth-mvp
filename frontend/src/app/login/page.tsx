@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+  const [role, setRole] = useState<'advisor' | 'client'>('advisor');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,7 +17,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/advisors/login', {
+      const response = await fetch(`http://localhost:8000/${role}s/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,10 +34,13 @@ export default function LoginPage() {
       
       // Store the token in localStorage
       localStorage.setItem('token', data.access_token);
-      localStorage.setItem('advisor_id', data.advisor_id.toString());
+      localStorage.removeItem('advisor_id');
+      localStorage.removeItem('client_id');
+      localStorage.setItem('role', data.role);
+      localStorage.setItem(`${role}_id`, String(data[`${role}_id`]));
       
       // Redirect to advisor dashboard
-      router.push('/advisor');
+      router.push(role === 'client' ? '/client' : '/advisor');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -49,11 +53,20 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Advisor Login
+            {role === 'advisor' ? 'Advisor Login' : 'Client Login'}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Sign in to access your client dashboard
+            {role === 'advisor' ? 'Sign in to view your clients' : 'Sign in to view your wealth details'}
           </p>
+        </div>
+        <div className="flex gap-2" aria-label="Login type">
+          {(['advisor', 'client'] as const).map((option) => (
+            <button key={option} type="button" disabled={loading} aria-pressed={role === option}
+              onClick={() => { setRole(option); setError(''); }}
+              className={`flex-1 rounded-md border p-2 capitalize ${role === option ? 'bg-indigo-600 text-white' : 'text-gray-900'}`}>
+              {option}
+            </button>
+          ))}
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           {error && (
@@ -100,10 +113,27 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="text-center text-sm text-gray-600">
-            <p>Demo credentials:</p>
-            <p className="font-mono">Email: john.smith@example.com</p>
-            <p className="font-mono">Password: password</p>
+          <div className="text-center text-sm text-gray-600 space-y-3">
+            <p className="font-semibold">Demo Credentials</p>
+            {role === 'advisor' ? (
+              <div>
+                <p className="font-mono">Email: john.smith@example.com</p>
+                <p className="font-mono">Password: password</p>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <p className="font-medium">Jane Doe</p>
+                  <p className="font-mono">Email: jane.doe@example.com</p>
+                  <p className="font-mono">Password: JaneDemo123!</p>
+                </div>
+                <div>
+                  <p className="font-medium">Mister Agapitos</p>
+                  <p className="font-mono">Email: mister.agapitos@example.com</p>
+                  <p className="font-mono">Password: AgapitosDemo123!</p>
+                </div>
+              </>
+            )}
           </div>
         </form>
       </div>

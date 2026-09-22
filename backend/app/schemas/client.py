@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 
 
 class ClientBase(BaseModel):
@@ -16,3 +16,12 @@ class ClientRead(ClientBase):
 
     class Config:
         from_attributes = True
+
+class ClientLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class ClientCredentials(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=72)

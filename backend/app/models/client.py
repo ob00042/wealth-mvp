@@ -13,6 +13,9 @@ class Client(Base):
 
     last_name = Column(String, nullable=False)
 
+    email = Column(String, unique=True, nullable=True)
+    hashed_password = Column(String, nullable=True)
+
     advisor_id = Column(
         Integer,
         ForeignKey("advisors.id"),

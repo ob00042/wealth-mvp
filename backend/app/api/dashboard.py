@@ -1,11 +1,11 @@
 from decimal import Decimal
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.models.client import Client
 from app.schemas.dashboard import ClientDashboard
+from app.utils.auth import get_current_user, require_client_access
 
 
 router = APIRouter(
@@ -20,21 +20,13 @@ router = APIRouter(
 )
 def get_dashboard(
     client_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
 ):
+    return build_dashboard(require_client_access(db, user, client_id))
 
-    client = (
-        db.query(Client)
-        .filter(Client.id == client_id)
-        .first()
-    )
 
-    if not client:
-        raise HTTPException(
-            status_code=404,
-            detail="Client not found"
-        )
-
+def build_dashboard(client):
     total_assets = Decimal("0")
 
     banks = []

@@ -52,38 +52,52 @@ def decode_access_token(token: str) -> Optional[dict]:
         return None
 
 
-def get_current_advisor(
+def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: Session = Depends(get_db)
-) -> Advisor:
-    """Get the current authenticated advisor from JWT token."""
-    token = credentials.credentials
-    payload = decode_access_token(token)
-    
-    if payload is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    advisor_id: int = payload.get("sub")
-    if advisor_id is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    advisor = db.query(Advisor).filter(Advisor.id == advisor_id).first()
-    if advisor is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Advisor not found",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    return advisor
+    db: Session = Depends(get_db),
+):
+    from app.models.client import Client
+
+    payload = decode_access_token(credentials.credentials)
+    if not payload or payload.get("role") not in ("advisor", "client"):
+        raise HTTPException(status_code=401, detail="Could not validate credentials")
+    try:
+        user_id = int(payload["sub"])
+    except (KeyError, ValueError, TypeError):
+        raise HTTPException(status_code=401, detail="Could not validate credentials")
+    model = Advisor if payload["role"] == "advisor" else Client
+    user = db.get(model, user_id)
+    if user is None:
+        raise HTTPException(status_code=401, detail="Could not validate credentials")
+    return user
+
+
+def get_current_advisor(user=Depends(get_current_user)) -> Advisor:
+    if not isinstance(user, Advisor):
+        raise HTTPException(status_code=403, detail="Advisor access required")
+    return user
+
+
+def get_current_client(user=Depends(get_current_user)):
+    from app.models.client import Client
+    if not isinstance(user, Client):
+        raise HTTPException(status_code=403, detail="Client access required")
+    return user
+
+
+def visible_clients(db, user):
+    from app.models.client import Client
+    query = db.query(Client)
+    if isinstance(user, Advisor):
+        return query.filter(Client.advisor_id == user.id)
+    return query.filter(Client.id == user.id)
+
+
+def require_client_access(db, user, client_id):
+    client = visible_clients(db, user).filter_by(id=client_id).first()
+    if client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+    return client
 
 
 def authenticate_advisor(email: str, password: str, db: Session) -> Optional[Advisor]:

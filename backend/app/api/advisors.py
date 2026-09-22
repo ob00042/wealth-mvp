@@ -39,20 +39,21 @@ def login_advisor(advisor_credentials: AdvisorLogin, db: Session = Depends(get_d
     
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": str(advisor.id)},
+        data={"sub": str(advisor.id), "role": "advisor"},
         expires_delta=access_token_expires
     )
     
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "advisor_id": advisor.id
+        "advisor_id": advisor.id,
+        "role": "advisor"
     }
 
 
 @router.get("", response_model=list[AdvisorRead])
-def get_advisors(db: Session = Depends(get_db)):
-    return db.query(Advisor).all()
+def get_advisors(current_advisor: Advisor = Depends(get_current_advisor)):
+    return [current_advisor]
 
 
 @router.get("/dashboard", response_model=AdvisorDashboard)

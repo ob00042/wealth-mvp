@@ -242,14 +242,15 @@ Interactive API documentation is available via Swagger.
 # Frontend Routes
 
 ```
-/                          - Home page (sample client dashboard)
+/                          - Redirects to login
+/login                     - Advisor or client login
+/client                    - Read-only dashboard for the signed-in client
 /advisor                   - Advisor dashboard (shows all managed clients)
 /advisor/client/{id}       - Client detail view (shows banks, accounts, positions)
 ```
 
 # Roadmap
 
-- Authentication
 - Bank integrations
 - Portfolio allocation
 - Performance analytics
@@ -263,3 +264,50 @@ Interactive API documentation is available via Swagger.
 # License
 
 Private project.
+
+# Client login and access control
+
+Apply the migration before starting the updated backend:
+
+```bash
+cd backend
+source .venv/bin/activate
+alembic upgrade head
+```
+
+Existing clients retain their data and have no login until their advisor enables it.
+Sign in as an advisor, open a client, and use **Client login access** to set an
+email and password (at least 8 characters, at most 72 UTF-8 bytes). Share those
+credentials with that client through your usual secure channel. The same form
+can reset credentials. Client emails are unique and case insensitive at login.
+
+On `/login`, select **Client**. Clients see only their own banks, accounts,
+positions, and total assets at `/client`, with no editing controls. API access
+is enforced independently of the UI: list endpoints are scoped to the signed-in
+user, other clients' dashboards return 404, and writes require the owning advisor.
+Existing advisor sessions must sign in again because tokens now include a role.
+
+Additional endpoints:
+
+- `POST /clients/login` — client email/password authentication
+- `GET /clients/me/dashboard` — signed-in client's own dashboard
+- `PUT /clients/{id}/credentials` — owning advisor sets client login credentials
+
+Run the access-control regression tests with:
+
+```bash
+cd backend
+.venv/bin/python -m unittest discover -s tests
+```
+
+
+Demo client logins (choose **Client** on the login screen):
+
+| Client | Email | Password |
+|--------|-------|----------|
+| Jane Doe | jane.doe@example.com | JaneDemo123! |
+| Mister Agapitos | mister.agapitos@example.com | AgapitosDemo123! |
+
+These credentials are included in `seed_data.py` for local demo use. The seed
+script deletes and rebuilds sample data; it is not needed to log into the
+existing demo clients once their credentials have been configured.

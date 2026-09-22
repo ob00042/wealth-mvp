@@ -28,6 +28,10 @@ export default function AdvisorDashboard() {
     const fetchDashboard = async () => {
       const token = localStorage.getItem('token');
       
+      if (localStorage.getItem('role') === 'client') {
+        router.replace('/client');
+        return;
+      }
       if (!token) {
         router.push('/login');
         return;
@@ -44,6 +48,8 @@ export default function AdvisorDashboard() {
           if (response.status === 401 || response.status === 403) {
             localStorage.removeItem('token');
             localStorage.removeItem('advisor_id');
+            localStorage.removeItem('client_id');
+            localStorage.removeItem('role');
             router.push('/login');
             return;
           }
@@ -65,6 +71,8 @@ export default function AdvisorDashboard() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('advisor_id');
+            localStorage.removeItem('client_id');
+            localStorage.removeItem('role');
     router.push('/login');
   };
 

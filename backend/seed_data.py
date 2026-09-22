@@ -51,6 +51,8 @@ def seed_additional_data():
         jane_doe = Client(
             first_name="Jane",
             last_name="Doe",
+            email="jane.doe@example.com",
+            hashed_password=hash_password("JaneDemo123!"),
             advisor_id=advisor.id
         )
         db.add(jane_doe)
@@ -155,6 +157,8 @@ def seed_additional_data():
         mister_agapitos = Client(
             first_name="Mister",
             last_name="Agapitos",
+            email="mister.agapitos@example.com",
+            hashed_password=hash_password("AgapitosDemo123!"),
             advisor_id=advisor.id
         )
         db.add(mister_agapitos)
@@ -263,6 +267,8 @@ def seed_additional_data():
         print(f"\nLogin credentials:")
         print(f"Email: john.smith@example.com")
         print(f"Password: password")
+        print("Client Jane Doe: jane.doe@example.com / JaneDemo123!")
+        print("Client Mister Agapitos: mister.agapitos@example.com / AgapitosDemo123!")
         
     except Exception as e:
         db.rollback()
