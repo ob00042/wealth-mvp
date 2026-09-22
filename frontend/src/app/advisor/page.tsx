@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import WealthShell, { StateView } from '@/components/WealthShell';
+import { number } from '@/lib/format';
 
 interface Client {
   id: number;
@@ -23,6 +26,7 @@ export default function AdvisorDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const router = useRouter();
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -68,71 +72,21 @@ export default function AdvisorDashboard() {
     fetchDashboard();
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('advisor_id');
-            localStorage.removeItem('client_id');
-            localStorage.removeItem('role');
-    router.push('/login');
-  };
+  if (loading) return <StateView />;
+  if (error) return <StateView error={error} />;
+  if (!dashboard) return null;
+  const clients = dashboard.clients.filter(client => `${client.first_name} ${client.last_name}`.toLowerCase().includes(search.toLowerCase()));
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-600">Error: {error}</div>
-      </div>
-    );
-  }
-
-  if (!dashboard) {
-    return null;
-  }
-
-  return (
-    <main className="p-10">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">
-            Advisor: {dashboard.first_name} {dashboard.last_name}
-          </h1>
-          <p className="text-gray-600">{dashboard.email}</p>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-        >
-          Logout
-        </button>
-      </div>
-
-      <h2 className="text-2xl font-bold">
-        Clients ({dashboard.clients.length})
-      </h2>
-
-      <div className="mt-6 space-y-4">
-        {dashboard.clients.map((client) => (
-          <a
-            key={client.id}
-            href={`/advisor/client/${client.id}`}
-            className="block rounded-xl border p-6 hover:bg-gray-50 transition-colors"
-          >
-            <h3 className="text-xl font-semibold">
-              {client.first_name} {client.last_name}
-            </h3>
-            <p className="mt-2 text-lg">
-              Total Assets: {client.total_assets}
-            </p>
-          </a>
-        ))}
-      </div>
+  return <WealthShell name={`${dashboard.first_name} ${dashboard.last_name}`} advisor>
+    <section className="page-hero"><div className="content-width"><p className="eyebrow">ADVISOR WORKSPACE / OVERVIEW</p><h1>A perspective on every portfolio.</h1><p>Your client relationships, connected to the details that matter.</p><div className="hero-meta"><span className="status-dot" /> {dashboard.first_name} {dashboard.last_name}<span className="meta-divider" />{dashboard.email}</div></div></section>
+    <main className="content-width main-content">
+      <div className="advisor-intro"><div><p className="eyebrow">YOUR BOOK OF BUSINESS</p><h2>Client portfolios</h2></div><div className="client-count"><strong>{dashboard.clients.length.toString().padStart(2, '0')}</strong><span>Managed clients</span></div></div>
+      <section className="panel"><div className="panel-heading"><div><h3>All clients</h3><p>Open a portfolio to explore accounts and holdings.</p></div><label className="search-field"><span aria-hidden="true">⌕</span><input aria-label="Search clients" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search clients" /></label></div>
+        <div className="table-scroll"><table className="data-table client-table"><thead><tr><th>Client name</th><th>Access</th><th className="numeric">Reported total assets*</th><th><span className="sr-only">View portfolio</span></th></tr></thead><tbody>{clients.map((client, i) => <tr key={client.id}><td><Link className="client-identity" href={`/advisor/client/${client.id}`}><span className={`client-avatar tone-${i % 2}`}>{client.first_name[0]}{client.last_name[0]}</span><span><strong>{client.first_name} {client.last_name}</strong><small>Private client · #{String(client.id).padStart(4, '0')}</small></span></Link></td><td><span className="access-tag">Client portfolio</span></td><td className="numeric client-value">{number(client.total_assets)}</td><td><Link className="text-link" href={`/advisor/client/${client.id}`}>View portfolio <span aria-hidden="true">↗</span></Link></td></tr>)}</tbody></table></div>
+        {clients.length === 0 && <p className="empty-state">{search ? 'No clients match your search.' : 'No client portfolios yet.'}</p>}
+        <div className="panel-footnote">* Reported totals are not currency converted. Open a portfolio for values by currency.</div>
+      </section>
+      <aside className="insight-strip"><span className="insight-icon" aria-hidden="true">↗</span><div><h3>The full picture starts with the details.</h3><p>Explore each client’s institutions, account balances and investment positions in one view.</p></div></aside>
     </main>
-  );
+  </WealthShell>;
 }

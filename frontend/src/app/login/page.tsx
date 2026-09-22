@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Brand } from '@/components/WealthShell';
 
 export default function LoginPage() {
   const [role, setRole] = useState<'advisor' | 'client'>('advisor');
@@ -39,7 +40,7 @@ export default function LoginPage() {
       localStorage.setItem('role', data.role);
       localStorage.setItem(`${role}_id`, String(data[`${role}_id`]));
       
-      // Redirect to advisor dashboard
+      // Open the dashboard for the selected role
       router.push(role === 'client' ? '/client' : '/advisor');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
@@ -48,95 +49,35 @@ export default function LoginPage() {
     }
   };
 
+  const demos = role === 'advisor'
+    ? [{ name: 'John Smith', email: 'john.smith@example.com', password: 'password' }]
+    : [{ name: 'Jane Doe', email: 'jane.doe@example.com', password: 'JaneDemo123!' }, { name: 'Mister Agapitos', email: 'mister.agapitos@example.com', password: 'AgapitosDemo123!' }];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            {role === 'advisor' ? 'Advisor Login' : 'Client Login'}
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            {role === 'advisor' ? 'Sign in to view your clients' : 'Sign in to view your wealth details'}
-          </p>
+    <main className="login-layout">
+      <section className="login-story">
+        <Brand />
+        <div className="story-copy"><p className="eyebrow">A CONNECTED VIEW OF YOUR WEALTH</p><h1>Every detail.<br />A clearer <em>perspective.</em></h1><p>Your accounts, investments and institutions.<br />Together in one considered view.</p></div>
+        <div className="orbital-art" aria-hidden="true"><div /><div /><div /><span /></div>
+        <div className="story-footer"><span>CLARITY THROUGH CONNECTION</span><span>01 / WEALTH</span></div>
+      </section>
+      <section className="login-panel">
+        <div className="login-form-wrap">
+          <p className="eyebrow">YOUR WEALTH, IN VIEW</p><h2>Welcome back.</h2><p className="muted">Sign in to your {role === 'advisor' ? 'advisor workspace' : 'personal portfolio'}.</p>
+          <div className="role-switch" aria-label="Login type">{(['advisor', 'client'] as const).map(option => <button key={option} type="button" disabled={loading} aria-pressed={role === option} className={role === option ? 'selected' : ''} onClick={() => { setRole(option); setError(''); }}>{option === 'advisor' ? 'Advisor' : 'Client'}</button>)}</div>
+          <form onSubmit={handleLogin} className="login-form">
+            {error && <p className="error-message" role="alert">{error}</p>}
+            <label htmlFor="email">Email address<input id="email" type="email" autoComplete="email" required placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} /></label>
+            <label htmlFor="password">Password<input id="password" type="password" autoComplete="current-password" required placeholder="Enter your password" value={password} onChange={e => setPassword(e.target.value)} /></label>
+            <button type="submit" className="button login-submit" disabled={loading}>{loading ? 'Signing in…' : 'Sign in'}<span aria-hidden="true">→</span></button>
+          </form>
+          <div className="demo-section"><div className="demo-heading"><span>Demo Credentials</span><span className="tag">EXPLORE WEALTH</span></div>
+            {demos.map(demo => <button type="button" className="demo-account" key={demo.email} disabled={loading} onClick={() => { setEmail(demo.email); setPassword(demo.password); setError(''); }} aria-label={`Use demo credentials for ${demo.name}`}><span><strong>{demo.name}</strong><span>{demo.email}</span><small>Password: {demo.password}</small></span><span className="demo-arrow" aria-hidden="true">↗</span></button>)}
+            <p className="demo-hint">Select an account to fill in its demo credentials.</p>
+          </div>
         </div>
-        <div className="flex gap-2" aria-label="Login type">
-          {(['advisor', 'client'] as const).map((option) => (
-            <button key={option} type="button" disabled={loading} aria-pressed={role === option}
-              onClick={() => { setRole(option); setError(''); }}
-              className={`flex-1 rounded-md border p-2 capitalize ${role === option ? 'bg-indigo-600 text-white' : 'text-gray-900'}`}>
-              {option}
-            </button>
-          ))}
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none rounded-t-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none rounded-b-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
-
-          <div className="text-center text-sm text-gray-600 space-y-3">
-            <p className="font-semibold">Demo Credentials</p>
-            {role === 'advisor' ? (
-              <div>
-                <p className="font-mono">Email: john.smith@example.com</p>
-                <p className="font-mono">Password: password</p>
-              </div>
-            ) : (
-              <>
-                <div>
-                  <p className="font-medium">Jane Doe</p>
-                  <p className="font-mono">Email: jane.doe@example.com</p>
-                  <p className="font-mono">Password: JaneDemo123!</p>
-                </div>
-                <div>
-                  <p className="font-medium">Mister Agapitos</p>
-                  <p className="font-mono">Email: mister.agapitos@example.com</p>
-                  <p className="font-mono">Password: AgapitosDemo123!</p>
-                </div>
-              </>
-            )}
-          </div>
-        </form>
-      </div>
-    </div>
+        <p className="login-footnote">One place. Your complete perspective.</p>
+      </section>
+    </main>
   );
 }

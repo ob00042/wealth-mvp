@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import WealthShell, { StateView } from '@/components/WealthShell';
+import { money, number, palette } from '@/lib/format';
 
 interface Position {
   security_name: string;
@@ -40,6 +43,8 @@ export default function ClientDetails({ clientId }: { clientId?: number }) {
   const router = useRouter();
   const [credentialsMessage, setCredentialsMessage] = useState('');
   const [saving, setSaving] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState('');
+  const [activeTab, setActiveTab] = useState<'accounts' | 'holdings'>('accounts');
 
   const saveCredentials = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -110,111 +115,40 @@ export default function ClientDetails({ clientId }: { clientId?: number }) {
     fetchDashboard();
   }, [clientId, router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
-  }
+  if (loading) return <StateView />;
+  if (error) return <StateView error={error} />;
+  if (!dashboard) return null;
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-600">Error: {error}</div>
-      </div>
-    );
-  }
+  const accounts = dashboard.banks.flatMap(bank => bank.accounts.map(account => ({ ...account, bankName: bank.name })));
+  const holdings = accounts.flatMap(account => account.positions.map(position => ({ ...position, accountName: account.name, accountId: account.id, bankName: account.bankName })));
+  const currencies = [...new Set([...accounts.map(a => a.currency), ...holdings.map(p => p.currency)])].sort();
+  const currency = currencies.includes(selectedCurrency) ? selectedCurrency : currencies[0] || 'USD';
+  const cash = accounts.filter(a => a.currency === currency).reduce((sum, a) => sum + Number(a.balance), 0);
+  const invested = holdings.filter(p => p.currency === currency).reduce((sum, p) => sum + Number(p.market_value), 0);
+  const total = cash + invested;
+  const bankValues = dashboard.banks.map(bank => ({ name: bank.name, value: bank.accounts.reduce((sum, a) => sum + (a.currency === currency ? Number(a.balance) : 0) + a.positions.filter(p => p.currency === currency).reduce((n, p) => n + Number(p.market_value), 0), 0) }));
+  const positiveTotal = bankValues.reduce((sum, bank) => sum + Math.max(0, bank.value), 0);
+  let stop = 0;
+  const gradient = bankValues.map((bank, i) => { const start = stop; stop += positiveTotal ? Math.max(0, bank.value) / positiveTotal * 100 : 0; return `${palette[i % palette.length]} ${start}% ${stop}%`; }).join(', ');
+  const visibleAccounts = accounts.filter(a => a.currency === currency);
+  const visibleHoldings = holdings.filter(p => p.currency === currency);
 
-  if (!dashboard) {
-    return null;
-  }
-
-  return (
-    <main className="p-10">
-      {clientId !== undefined ? <a 
-        href="/advisor" 
-        className="text-blue-600 hover:underline mb-6 inline-block"
-      >
-        ← Back to Advisor Dashboard
-      </a> : <button className="mb-6 text-blue-600" onClick={() => {
-        ['token', 'role', 'advisor_id', 'client_id'].forEach(key => localStorage.removeItem(key));
-        router.replace('/login');
-      }}>Logout</button>}
-
-      <h1 className="text-3xl font-bold">
-        {dashboard.first_name} {dashboard.last_name}
-      </h1>
-
-      {clientId !== undefined && <form onSubmit={saveCredentials} className="mt-6 rounded-xl border p-6 space-y-3">
-        <h2 className="text-lg font-semibold">Client login access</h2>
-        <p>Set or reset this client’s email and password for read-only access to their details.</p>
-        <label className="block">Email
-          <input name="email" type="email" required className="block border rounded p-2" autoComplete="off" />
-        </label>
-        <label className="block">New password
-          <input name="password" type="password" required minLength={8} maxLength={72} className="block border rounded p-2" autoComplete="new-password" />
-        </label>
-        <button disabled={saving} className="rounded bg-indigo-600 text-white px-4 py-2 disabled:opacity-50">{saving ? 'Saving...' : 'Save client login'}</button>
-        <p role="status">{credentialsMessage}</p>
-      </form>}
-
-      <div className="mt-6 rounded-xl border p-6">
-        <h2 className="text-lg">
-          Total Assets
-        </h2>
-
-        <p className="text-4xl font-bold">
-          {dashboard.total_assets}
-        </p>
-      </div>
-
-      <h2 className="mt-10 text-2xl font-bold">
-        Banks
-      </h2>
-
-      {dashboard.banks.map((bank) => (
-        <div
-          key={bank.id}
-          className="mt-5 rounded-xl border p-5"
-        >
-          <h3 className="text-xl font-semibold">
-            {bank.name}
-          </h3>
-
-          {bank.accounts.map((account) => (
-            <div
-              key={account.id}
-              className="mt-4"
-            >
-              <p className="font-medium">
-                {account.name}
-              </p>
-
-              <p>
-                Balance:
-                {" "}
-                {account.balance}
-                {" "}
-                {account.currency}
-              </p>
-
-              <ul className="ml-5 mt-2 list-disc">
-                {account.positions.map((position) => (
-                  <li key={position.security_name}>
-                    {position.security_name}
-                    :
-                    {" "}
-                    {position.market_value}
-                    {" "}
-                    {position.currency}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      ))}
+  return <WealthShell name={clientId !== undefined ? 'Advisor' : `${dashboard.first_name} ${dashboard.last_name}`} advisor={clientId !== undefined}>
+    <section className="page-hero portfolio-hero"><div className="content-width">
+      <p className="eyebrow">{clientId !== undefined ? <Link href="/advisor">CLIENT PORTFOLIOS /</Link> : 'YOUR WEALTH /'} PORTFOLIO OVERVIEW</p>
+      <div className="hero-title-row"><div><h1>{dashboard.first_name} {dashboard.last_name}</h1><p>A connected view of your financial world.</p></div><span className="hero-badge">{clientId === undefined ? 'Read-only access' : 'Client portfolio'}</span></div>
+    </div></section>
+    <main className="content-width main-content portfolio-content">
+      <div className="overview-toolbar"><div><span className="status-dot" /> Current portfolio snapshot</div><label>Currency <select value={currency} onChange={e => setSelectedCurrency(e.target.value)}>{(currencies.length ? currencies : ['USD']).map(c => <option key={c}>{c}</option>)}</select></label></div>
+      <div className="metrics-grid"><section className="metric-card primary-metric"><p>Total assets <span>{currency}</span></p><strong>{money(total, currency)}</strong><small>Account balances + investment positions</small></section><section className="metric-card"><p>Account balances</p><strong>{money(cash, currency)}</strong><small>{visibleAccounts.length} accounts in {currency}</small></section><section className="metric-card"><p>Investment positions</p><strong>{money(invested, currency)}</strong><small>{visibleHoldings.length} holdings in {currency}</small></section><section className="metric-card"><p>Financial institutions</p><strong>{dashboard.banks.length.toString().padStart(2, '0')}</strong><small>{accounts.length} accounts across your portfolio</small></section></div>
+      {currencies.length > 1 && <p className="currency-note">Values shown in their original currency. Select a currency to explore its balances; no FX conversion is applied.</p>}
+      <div className="analytics-grid"><section className="panel"><div className="panel-heading"><div><h2>Institution allocation</h2><p>Distribution of positive balances · {currency}</p></div><span className="tiny-label">ALLOCATION</span></div><div className="allocation-content"><div className="donut" role="img" aria-label={`Institution allocation in ${currency}. ${bankValues.map(b => `${b.name}: ${money(b.value, currency)}`).join('. ')}`} style={{ background: positiveTotal ? `conic-gradient(${gradient})` : '#e5e9e8' }}><div><span>INSTITUTIONS</span><strong>{bankValues.filter(b => b.value > 0).length}</strong></div></div><div className="allocation-legend">{bankValues.map((bank, i) => <div key={bank.name}><span className="legend-label"><i style={{ background: palette[i % palette.length] }} />{bank.name}</span><strong>{positiveTotal ? (Math.max(0, bank.value) / positiveTotal * 100).toFixed(1) : '0.0'}%</strong></div>)}</div></div></section>
+      <section className="panel"><div className="panel-heading"><div><h2>Assets by institution</h2><p>Account balances and holdings · {currency}</p></div></div><div className="bank-bars">{bankValues.map((bank, i) => <div className="bank-bar" key={bank.name}><div><span>{bank.name}</span><strong>{money(bank.value, currency)}</strong></div><div className="bar-track"><div style={{ width: `${positiveTotal ? Math.max(0, bank.value) / positiveTotal * 100 : 0}%`, background: palette[i % palette.length] }} /></div></div>)}{bankValues.length === 0 && <p className="empty-state">No institutions added yet.</p>}</div></section></div>
+      <section className="panel holdings-panel"><div className="panel-heading"><div><h2>Portfolio detail</h2><p>The accounts and investments behind your wealth.</p></div><span className="tag">{currency}</span></div><div className="table-tabs" aria-label="Portfolio detail view">{(['accounts', 'holdings'] as const).map(tab => <button key={tab} aria-pressed={activeTab === tab} onClick={() => setActiveTab(tab)} className={activeTab === tab ? 'active' : ''}>{tab === 'accounts' ? 'Accounts' : 'Investment holdings'} <span>{tab === 'accounts' ? visibleAccounts.length : visibleHoldings.length}</span></button>)}</div>
+      <div className="table-scroll">{activeTab === 'accounts' ? <table className="data-table"><thead><tr><th>Account name</th><th>Institution</th><th>Account type</th><th>Currency</th><th className="numeric">Balance</th></tr></thead><tbody>{visibleAccounts.map(a => <tr key={a.id}><td className="strong-cell">{a.name}</td><td>{a.bankName}</td><td><span className="type-tag">{a.account_type}</span></td><td>{a.currency}</td><td className="numeric">{money(a.balance, a.currency)}</td></tr>)}</tbody><tfoot><tr><td colSpan={4}>Total account balances</td><td className="numeric">{money(cash, currency)}</td></tr></tfoot></table> : <table className="data-table"><thead><tr><th>Security</th><th>Account</th><th className="numeric">Quantity</th><th>Currency</th><th className="numeric">Market value</th></tr></thead><tbody>{visibleHoldings.map((p, i) => <tr key={`${p.accountId}-${i}`}><td className="strong-cell">{p.security_name}</td><td>{p.accountName}</td><td className="numeric">{number(p.quantity)}</td><td>{p.currency}</td><td className="numeric">{money(p.market_value, p.currency)}</td></tr>)}</tbody><tfoot><tr><td colSpan={4}>Total investment positions</td><td className="numeric">{money(invested, currency)}</td></tr></tfoot></table>}</div>
+      {(activeTab === 'accounts' ? visibleAccounts : visibleHoldings).length === 0 && <p className="empty-state">No {activeTab} in {currency}.</p>}
+      <div className="panel-footnote">Values reflect the data currently held in your portfolio.</div></section>
+      {clientId !== undefined && <details className="panel credentials-panel"><summary>Client login access <span>Manage credentials</span></summary><form onSubmit={saveCredentials} className="credentials-form"><p>Set or reset this client’s credentials for read-only access to their portfolio.</p><div><label>Email<input name="email" type="email" required autoComplete="off" /></label><label>New password<input name="password" type="password" required minLength={8} maxLength={72} autoComplete="new-password" /></label><button disabled={saving} className="button">{saving ? 'Saving…' : 'Save client login'}</button></div><p role="status">{credentialsMessage}</p></form></details>}
     </main>
-  );
+  </WealthShell>;
 }
