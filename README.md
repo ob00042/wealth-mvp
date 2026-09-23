@@ -311,3 +311,62 @@ Demo client logins (choose **Client** on the login screen):
 These credentials are included in `seed_data.py` for local demo use. The seed
 script deletes and rebuilds sample data; it is not needed to log into the
 existing demo clients once their credentials have been configured.
+
+# Transactions and historical valuations
+
+After pulling this feature, apply the schema and add history to existing demo clients:
+
+```bash
+cd backend
+.venv/bin/alembic upgrade head
+.venv/bin/python seed_history.py
+```
+
+This preserves current accounts, positions and credentials. Re-running the history
+seed skips existing transaction source IDs and valuation keys. The full
+`seed_data.py` reset also includes history, but still deletes and rebuilds demo data.
+
+Jane has 202 transactions and Mister Agapitos has 207. Each has 13 portfolio
+snapshots (52 account snapshots), from 30 September 2025 through 22 September 2026.
+The monthly series plus the final dated snapshot is synthetic and labelled in the UI.
+The final snapshot reconciles to existing cash and investment values. Each interval's
+cash movement reconciles to its transactions. Trades also change synthetic holding
+quantities; market prices fluctuate between snapshots. Existing balances are not
+updated by importing history.
+
+Both roles see **Activity & history** below portfolio detail. Filter by account,
+currency and date, inspect the chart or valuation table, and filter transactions
+by type with server-side pagination. There is no editing or trading UI.
+
+Accounting conventions:
+
+- `Account.balance` is **cash**, excluding investment positions.
+- Transaction `amount` is signed cash: buys, withdrawals and fees are negative;
+  sells, deposits and income are positive. Trade quantity is positive for buys
+  and negative for sells. Fees should be separate rows.
+- Trade date and optional settlement date are separate fields. Demo transactions
+  settle on the same day. No pending/settled balance engine is implemented.
+- Account valuations are end-of-day cash and aggregate investment values for an
+  account/date/currency; total value is their sum. Money uses database decimals.
+- Values are grouped by original currency, never summed across currencies.
+- Change in value includes cash flows and is **not** a performance return.
+- Missing account snapshots are flagged as partial coverage, not filled with zero
+  or carried forward. Coverage conservatively includes current accounts and those
+  with recorded history in the currency; account opening/closing dates are not yet modelled.
+- Source and external transaction IDs prevent duplicate imports. Imported timestamps
+  preserve provenance. The seed skips existing valuations rather than overwriting them.
+
+Read endpoints (Bearer token required):
+
+- `GET /clients/{id}/transactions` or `/clients/me/transactions`
+- `GET /clients/{id}/valuations` or `/clients/me/valuations`
+
+Both accept optional `account_id`, `currency`, `start_date`, and `end_date` (inclusive).
+Transactions also accept `type`, `limit` (1–100) and `offset`. They return newest
+first, with stable ID ordering for same-day entries. Valuations return oldest first
+with account coverage and source labels. Access is limited to the client themselves
+or their owning advisor; account filters cannot bypass this check.
+
+This implements persisted historical data and its read APIs. Actual bank connectors,
+CSV import UI, daily price feeds, individual position snapshots and return calculations
+are future work. The demo fixture is a fixed history, not a background updating feed.

@@ -8,6 +8,8 @@ from app.models.bank import Bank
 from app.models.account import Account
 from app.models.position import Position
 from app.utils.auth import hash_password
+from app.models.history import Transaction, AccountValuation
+from seed_history import seed_demo_history
 
 
 def seed_additional_data():
@@ -17,6 +19,9 @@ def seed_additional_data():
         # Delete existing data in reverse order of dependencies
         print("Cleaning up existing data...")
         
+        db.query(Transaction).delete()
+        db.query(AccountValuation).delete()
+
         # Delete positions first (they depend on accounts)
         db.query(Position).delete()
         
@@ -259,6 +264,8 @@ def seed_additional_data():
             
             print(f"Added account for Mister Agapitos: {account.name}")
         
+        db.flush()
+        seed_demo_history(db)
         db.commit()
         print("\n✅ Successfully seeded data!")
         print(f"- Created advisor John Smith")
