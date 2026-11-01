@@ -138,8 +138,8 @@ export default function ClientDetails({ clientId }: { clientId?: number }) {
 
   return <WealthShell name={clientId !== undefined ? 'Advisor' : `${dashboard.first_name} ${dashboard.last_name}`} advisor={clientId !== undefined}>
     <section className="page-hero portfolio-hero"><div className="content-width">
-      <p className="eyebrow">{clientId !== undefined ? <Link href="/advisor">CLIENT PORTFOLIOS /</Link> : 'YOUR WEALTH /'} PORTFOLIO OVERVIEW</p>
-      <div className="hero-title-row"><div><h1>{dashboard.first_name} {dashboard.last_name}</h1><p>A connected view of your financial world.</p></div><span className="hero-badge">{clientId === undefined ? 'Read-only access' : 'Client portfolio'}</span></div>
+      <p className="eyebrow">{clientId !== undefined ? <Link href="/advisor">CLIENT PORTFOLIOS /</Link> : '01 CLARITY /'} PORTFOLIO OVERVIEW</p>
+      <div className="hero-title-row"><div><h1>{dashboard.first_name} {dashboard.last_name}</h1><p>All your accounts consolidated in one place.</p></div><span className="hero-badge">{clientId === undefined ? 'Read-only access' : 'Client portfolio'}</span></div>
     </div></section>
     <main className="content-width main-content portfolio-content">
       <div className="overview-toolbar"><div><span className="status-dot" /> Current portfolio snapshot</div><label>Currency <select value={currency} onChange={e => setSelectedCurrency(e.target.value)}>{(currencies.length ? currencies : ['USD']).map(c => <option key={c}>{c}</option>)}</select></label></div>

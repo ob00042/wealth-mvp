@@ -39,12 +39,12 @@ function ValuationChart({ items, currency }: { items: Valuation[]; currency: str
   return <div className="valuation-chart">
     <div className="chart-reading"><div><span>{dateLabel(selected.as_of_date)}{!selected.complete && ' · Partial coverage'}</span><strong>{money(selected.total_value, currency)}</strong></div><div className="chart-key"><i />Portfolio value</div></div>
     <svg viewBox="0 0 900 255" role="img" aria-label={`Portfolio valuations in ${currency}, ${dateLabel(items[0].as_of_date)} to ${dateLabel(items.at(-1)!.as_of_date)}. Exact values are available in the valuation history table below.`}>
-      {[0, 1, 2, 3].map(tick => { const height = 35 + tick * 175 / 3; return <g key={tick}><line x1="85" x2="870" y1={height} y2={height} stroke="#e6ece8" /><text x="72" y={height + 4} textAnchor="end" fill="#718277" fontSize="11">{compact.format(ceiling - tick * (ceiling - floor) / 3)}</text></g>; })}
-      {items.slice(1).map((point, index) => point.complete && items[index].complete ? <line key={point.as_of_date} x1={x(items[index])} y1={y(items[index])} x2={x(point)} y2={y(point)} stroke="#3d7161" strokeWidth="2.5" /> : null)}
-      <line x1={x(selected)} x2={x(selected)} y1="28" y2="214" stroke="#a7bdb0" strokeDasharray="4 4" />
-      {items.map(point => <circle key={point.as_of_date} cx={x(point)} cy={y(point)} r={point.as_of_date === selected.as_of_date ? 5 : 3.5} fill={point.complete ? '#3d7161' : '#bc8253'} stroke="white" strokeWidth="2" onMouseEnter={() => setFocusedDate(point.as_of_date)}><title>{dateLabel(point.as_of_date)}: {money(point.total_value, currency)}</title></circle>)}
-      <text x="85" y="245" fill="#718277" fontSize="11">{dateLabel(items[0].as_of_date)}</text>
-      {items.length > 1 && <text x="870" y="245" textAnchor="end" fill="#718277" fontSize="11">{dateLabel(items.at(-1)!.as_of_date)}</text>}
+      {[0, 1, 2, 3].map(tick => { const height = 35 + tick * 175 / 3; return <g key={tick}><line x1="85" x2="870" y1={height} y2={height} stroke="#e6e9ec" /><text x="72" y={height + 4} textAnchor="end" fill="#717b82" fontSize="11">{compact.format(ceiling - tick * (ceiling - floor) / 3)}</text></g>; })}
+      {items.slice(1).map((point, index) => point.complete && items[index].complete ? <line key={point.as_of_date} x1={x(items[index])} y1={y(items[index])} x2={x(point)} y2={y(point)} stroke="#3d5b71" strokeWidth="2.5" /> : null)}
+      <line x1={x(selected)} x2={x(selected)} y1="28" y2="214" stroke="#a7b4bd" strokeDasharray="4 4" />
+      {items.map(point => <circle key={point.as_of_date} cx={x(point)} cy={y(point)} r={point.as_of_date === selected.as_of_date ? 5 : 3.5} fill={point.complete ? '#3d5b71' : '#bc8253'} stroke="white" strokeWidth="2" onMouseEnter={() => setFocusedDate(point.as_of_date)}><title>{dateLabel(point.as_of_date)}: {money(point.total_value, currency)}</title></circle>)}
+      <text x="85" y="245" fill="#717b82" fontSize="11">{dateLabel(items[0].as_of_date)}</text>
+      {items.length > 1 && <text x="870" y="245" textAnchor="end" fill="#717b82" fontSize="11">{dateLabel(items.at(-1)!.as_of_date)}</text>}
     </svg>
     <label className="chart-date-selector">Inspect a snapshot<select value={selected.as_of_date} onChange={event => setFocusedDate(event.target.value)}>{items.map(point => <option key={point.as_of_date} value={point.as_of_date}>{dateLabel(point.as_of_date)}</option>)}</select></label>
   </div>;
