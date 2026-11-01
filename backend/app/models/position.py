@@ -14,6 +14,8 @@ class Position(Base):
         nullable=False
     )
 
+    provider_product_id = Column(String, nullable=True)
+
     ticker = Column(String, nullable=True)
 
     asset_type = Column(String, nullable=True)

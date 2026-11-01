@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 
 class PositionDashboard(BaseModel):
+    provider_product_id: str | None = None
     security_name: str
     quantity: Decimal
     market_value: Decimal

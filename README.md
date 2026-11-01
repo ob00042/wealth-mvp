@@ -370,3 +370,59 @@ or their owning advisor; account filters cannot bypass this check.
 This implements persisted historical data and its read APIs. Actual bank connectors,
 CSV import UI, daily price feeds, individual position snapshots and return calculations
 are future work. The demo fixture is a fixed history, not a background updating feed.
+
+# Fictional market-data provider
+
+The authenticated mock API serves fictional product profiles and dated constituents.
+It makes no Bloomberg calls and does not reproduce a Bloomberg API contract. The
+`MarketDataProvider` interface separates the application from its fixture adapter,
+so a licensed provider can be integrated later.
+
+To add products to an existing demo database without resetting its clients:
+
+```bash
+cd backend
+.venv/bin/alembic upgrade head
+.venv/bin/python seed_products.py
+```
+
+The seed adds a **Fictional Product Demo Portfolio** account to each demo client,
+with 15,000 cash in the client's currency and these investment positions:
+
+| Client | Product | Value |
+|--------|---------|-------|
+| Jane Doe | Atlas Global Equity ETF | USD 20,000 |
+| Jane Doe | Nova Innovation ETF | USD 10,000 |
+| Jane Doe | Cedar Technologies | USD 3,000 |
+| Mister Agapitos | Atlas Global Equity ETF — EUR class | EUR 30,000 |
+| Mister Agapitos | Horizon Balanced Fund | EUR 20,000 |
+| Mister Agapitos | Cedar Technologies — EUR listing | EUR 5,000 |
+
+Existing positions and credentials are preserved. Re-running the seed skips
+existing demo positions and history. Each new account adds 63 transactions and
+13 valuation snapshots, extending the original history totals above to 265/270
+transactions and 65 account snapshots per client. The full `seed_data.py` reset
+also includes these products.
+
+Both advisor and client dashboards show **Product holdings** for linked positions.
+Choose a product and an optional cutoff date to inspect its latest snapshot on or
+before that date. Fixtures include 30 June and 22 September 2026 snapshots,
+shared underlying security IDs across products, and a fund with 10% undisclosed
+holdings. The UI reports coverage, snapshot age, and a demo stale-data threshold
+of 45 days. Security currency is metadata, not a calculated FX exposure.
+
+Bearer-authenticated endpoints:
+
+- `GET /market-data/products`
+- `GET /market-data/products/{product_id}/holdings?as_of=2026-09-22`
+
+The cutoff defaults to today's UTC date. Unknown products and dates before the
+first snapshot return 404; future cutoff dates return 422; an unavailable provider
+returns 503. Product metadata contains no client information. Client portfolios
+continue to use the existing ownership checks.
+
+Fixtures live in `backend/app/providers/fixtures/products.json`. Constituents use
+fractional NAV weights; undisclosed weight stays explicit rather than being
+redistributed. Underlying constituents are not added to account balances, avoiding
+double counting. Combined portfolio exposure analysis and recommendations remain
+future work.

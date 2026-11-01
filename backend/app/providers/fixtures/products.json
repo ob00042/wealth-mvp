@@ -1,0 +1,487 @@
+{
+  "description": "Entirely fictional provider fixtures. Not Bloomberg data or a Bloomberg API replica. Weights are fractions of fund NAV; constituent currencies describe instruments, not FX risk.",
+  "products": [
+    {
+      "id": "demo-atlas-usd",
+      "name": "Atlas Global Equity ETF",
+      "ticker": "ATLD",
+      "product_type": "ETF",
+      "currency": "USD",
+      "manager": "Fictional Asset Management"
+    },
+    {
+      "id": "demo-atlas-eur",
+      "name": "Atlas Global Equity ETF \u2014 EUR class",
+      "ticker": "ATLE",
+      "product_type": "ETF",
+      "currency": "EUR",
+      "manager": "Fictional Asset Management"
+    },
+    {
+      "id": "demo-nova-usd",
+      "name": "Nova Innovation ETF",
+      "ticker": "NOVA",
+      "product_type": "ETF",
+      "currency": "USD",
+      "manager": "Fictional Asset Management"
+    },
+    {
+      "id": "demo-horizon-eur",
+      "name": "Horizon Balanced Fund",
+      "ticker": "HZNB",
+      "product_type": "Fund",
+      "currency": "EUR",
+      "manager": "Fictional Asset Management"
+    },
+    {
+      "id": "demo-cedar-usd",
+      "name": "Cedar Technologies",
+      "ticker": "CEDR",
+      "product_type": "Stock",
+      "currency": "USD",
+      "manager": "Not applicable"
+    },
+    {
+      "id": "demo-cedar-eur",
+      "name": "Cedar Technologies \u2014 EUR listing",
+      "ticker": "CEDE",
+      "product_type": "Stock",
+      "currency": "EUR",
+      "manager": "Not applicable"
+    }
+  ],
+  "snapshots": [
+    {
+      "product_id": "demo-atlas-usd",
+      "as_of_date": "2026-06-30",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "0.3"
+        },
+        {
+          "security_id": "demo-harbor",
+          "name": "Harbor Health",
+          "asset_class": "Equity",
+          "sector": "Healthcare",
+          "country": "Switzerland",
+          "currency": "CHF",
+          "weight": "0.2"
+        },
+        {
+          "security_id": "demo-solstice",
+          "name": "Solstice Energy",
+          "asset_class": "Equity",
+          "sector": "Energy",
+          "country": "Denmark",
+          "currency": "DKK",
+          "weight": "0.15"
+        },
+        {
+          "security_id": "demo-meridian",
+          "name": "Meridian Industries",
+          "asset_class": "Equity",
+          "sector": "Industrials",
+          "country": "Germany",
+          "currency": "EUR",
+          "weight": "0.2"
+        },
+        {
+          "security_id": "demo-lumen",
+          "name": "Lumen Consumer",
+          "asset_class": "Equity",
+          "sector": "Consumer goods",
+          "country": "Japan",
+          "currency": "JPY",
+          "weight": "0.15"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-atlas-usd",
+      "as_of_date": "2026-09-22",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "0.25"
+        },
+        {
+          "security_id": "demo-harbor",
+          "name": "Harbor Health",
+          "asset_class": "Equity",
+          "sector": "Healthcare",
+          "country": "Switzerland",
+          "currency": "CHF",
+          "weight": "0.25"
+        },
+        {
+          "security_id": "demo-solstice",
+          "name": "Solstice Energy",
+          "asset_class": "Equity",
+          "sector": "Energy",
+          "country": "Denmark",
+          "currency": "DKK",
+          "weight": "0.2"
+        },
+        {
+          "security_id": "demo-meridian",
+          "name": "Meridian Industries",
+          "asset_class": "Equity",
+          "sector": "Industrials",
+          "country": "Germany",
+          "currency": "EUR",
+          "weight": "0.15"
+        },
+        {
+          "security_id": "demo-lumen",
+          "name": "Lumen Consumer",
+          "asset_class": "Equity",
+          "sector": "Consumer goods",
+          "country": "Japan",
+          "currency": "JPY",
+          "weight": "0.15"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-atlas-eur",
+      "as_of_date": "2026-06-30",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "0.3"
+        },
+        {
+          "security_id": "demo-harbor",
+          "name": "Harbor Health",
+          "asset_class": "Equity",
+          "sector": "Healthcare",
+          "country": "Switzerland",
+          "currency": "CHF",
+          "weight": "0.2"
+        },
+        {
+          "security_id": "demo-solstice",
+          "name": "Solstice Energy",
+          "asset_class": "Equity",
+          "sector": "Energy",
+          "country": "Denmark",
+          "currency": "DKK",
+          "weight": "0.15"
+        },
+        {
+          "security_id": "demo-meridian",
+          "name": "Meridian Industries",
+          "asset_class": "Equity",
+          "sector": "Industrials",
+          "country": "Germany",
+          "currency": "EUR",
+          "weight": "0.2"
+        },
+        {
+          "security_id": "demo-lumen",
+          "name": "Lumen Consumer",
+          "asset_class": "Equity",
+          "sector": "Consumer goods",
+          "country": "Japan",
+          "currency": "JPY",
+          "weight": "0.15"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-atlas-eur",
+      "as_of_date": "2026-09-22",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "0.25"
+        },
+        {
+          "security_id": "demo-harbor",
+          "name": "Harbor Health",
+          "asset_class": "Equity",
+          "sector": "Healthcare",
+          "country": "Switzerland",
+          "currency": "CHF",
+          "weight": "0.25"
+        },
+        {
+          "security_id": "demo-solstice",
+          "name": "Solstice Energy",
+          "asset_class": "Equity",
+          "sector": "Energy",
+          "country": "Denmark",
+          "currency": "DKK",
+          "weight": "0.2"
+        },
+        {
+          "security_id": "demo-meridian",
+          "name": "Meridian Industries",
+          "asset_class": "Equity",
+          "sector": "Industrials",
+          "country": "Germany",
+          "currency": "EUR",
+          "weight": "0.15"
+        },
+        {
+          "security_id": "demo-lumen",
+          "name": "Lumen Consumer",
+          "asset_class": "Equity",
+          "sector": "Consumer goods",
+          "country": "Japan",
+          "currency": "JPY",
+          "weight": "0.15"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-nova-usd",
+      "as_of_date": "2026-06-30",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "0.5"
+        },
+        {
+          "security_id": "demo-harbor",
+          "name": "Harbor Health",
+          "asset_class": "Equity",
+          "sector": "Healthcare",
+          "country": "Switzerland",
+          "currency": "CHF",
+          "weight": "0.3"
+        },
+        {
+          "security_id": "demo-meridian",
+          "name": "Meridian Industries",
+          "asset_class": "Equity",
+          "sector": "Industrials",
+          "country": "Germany",
+          "currency": "EUR",
+          "weight": "0.2"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-nova-usd",
+      "as_of_date": "2026-09-22",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "0.45"
+        },
+        {
+          "security_id": "demo-harbor",
+          "name": "Harbor Health",
+          "asset_class": "Equity",
+          "sector": "Healthcare",
+          "country": "Switzerland",
+          "currency": "CHF",
+          "weight": "0.35"
+        },
+        {
+          "security_id": "demo-meridian",
+          "name": "Meridian Industries",
+          "asset_class": "Equity",
+          "sector": "Industrials",
+          "country": "Germany",
+          "currency": "EUR",
+          "weight": "0.2"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-horizon-eur",
+      "as_of_date": "2026-06-30",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "0.15"
+        },
+        {
+          "security_id": "demo-harbor",
+          "name": "Harbor Health",
+          "asset_class": "Equity",
+          "sector": "Healthcare",
+          "country": "Switzerland",
+          "currency": "CHF",
+          "weight": "0.1"
+        },
+        {
+          "security_id": "demo-meridian",
+          "name": "Meridian Industries",
+          "asset_class": "Equity",
+          "sector": "Industrials",
+          "country": "Germany",
+          "currency": "EUR",
+          "weight": "0.1"
+        },
+        {
+          "security_id": "demo-alder-bond",
+          "name": "Alder Treasury 2031",
+          "asset_class": "Fixed income",
+          "sector": "Government",
+          "country": "Germany",
+          "currency": "EUR",
+          "weight": "0.4"
+        },
+        {
+          "security_id": "demo-harbor-bond",
+          "name": "Harbor Health Bond 2030",
+          "asset_class": "Fixed income",
+          "sector": "Healthcare",
+          "country": "Switzerland",
+          "currency": "CHF",
+          "weight": "0.15"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-horizon-eur",
+      "as_of_date": "2026-09-22",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "0.1"
+        },
+        {
+          "security_id": "demo-harbor",
+          "name": "Harbor Health",
+          "asset_class": "Equity",
+          "sector": "Healthcare",
+          "country": "Switzerland",
+          "currency": "CHF",
+          "weight": "0.1"
+        },
+        {
+          "security_id": "demo-meridian",
+          "name": "Meridian Industries",
+          "asset_class": "Equity",
+          "sector": "Industrials",
+          "country": "Germany",
+          "currency": "EUR",
+          "weight": "0.1"
+        },
+        {
+          "security_id": "demo-alder-bond",
+          "name": "Alder Treasury 2031",
+          "asset_class": "Fixed income",
+          "sector": "Government",
+          "country": "Germany",
+          "currency": "EUR",
+          "weight": "0.4"
+        },
+        {
+          "security_id": "demo-harbor-bond",
+          "name": "Harbor Health Bond 2030",
+          "asset_class": "Fixed income",
+          "sector": "Healthcare",
+          "country": "Switzerland",
+          "currency": "CHF",
+          "weight": "0.2"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-cedar-usd",
+      "as_of_date": "2026-06-30",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "1"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-cedar-usd",
+      "as_of_date": "2026-09-22",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "1"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-cedar-eur",
+      "as_of_date": "2026-06-30",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "1"
+        }
+      ]
+    },
+    {
+      "product_id": "demo-cedar-eur",
+      "as_of_date": "2026-09-22",
+      "holdings": [
+        {
+          "security_id": "demo-cedar",
+          "name": "Cedar Technologies",
+          "asset_class": "Equity",
+          "sector": "Technology",
+          "country": "United States",
+          "currency": "USD",
+          "weight": "1"
+        }
+      ]
+    }
+  ]
+}

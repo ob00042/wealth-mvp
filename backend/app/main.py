@@ -8,7 +8,8 @@ from app.api import (
     dashboard,
     banks,
     advisors,
-    history
+    history,
+    market_data
 )
 
 
@@ -52,6 +53,7 @@ app.include_router(
 
 
 app.include_router(history.router)
+app.include_router(market_data.router)
 
 
 @app.get("/")

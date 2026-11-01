@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 class PositionBase(BaseModel):
     security_name: str
+    provider_product_id: str | None = None
     ticker: str | None = None
     asset_type: str | None = None
     quantity: Decimal

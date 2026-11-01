@@ -6,8 +6,10 @@ import Link from 'next/link';
 import WealthShell, { StateView } from '@/components/WealthShell';
 import { money, number, palette } from '@/lib/format';
 import PortfolioHistory from '@/components/PortfolioHistory';
+import ProductHoldings from '@/components/ProductHoldings';
 
 interface Position {
+  provider_product_id?: string | null;
   security_name: string;
   quantity: number;
   market_value: number;
@@ -149,6 +151,7 @@ export default function ClientDetails({ clientId }: { clientId?: number }) {
       <div className="table-scroll">{activeTab === 'accounts' ? <table className="data-table"><thead><tr><th>Account name</th><th>Institution</th><th>Account type</th><th>Currency</th><th className="numeric">Cash balance</th></tr></thead><tbody>{visibleAccounts.map(a => <tr key={a.id}><td className="strong-cell">{a.name}</td><td>{a.bankName}</td><td><span className="type-tag">{a.account_type}</span></td><td>{a.currency}</td><td className="numeric">{money(a.balance, a.currency)}</td></tr>)}</tbody><tfoot><tr><td colSpan={4}>Total cash balances</td><td className="numeric">{money(cash, currency)}</td></tr></tfoot></table> : <table className="data-table"><thead><tr><th>Security</th><th>Account</th><th className="numeric">Quantity</th><th>Currency</th><th className="numeric">Market value</th></tr></thead><tbody>{visibleHoldings.map((p, i) => <tr key={`${p.accountId}-${i}`}><td className="strong-cell">{p.security_name}</td><td>{p.accountName}</td><td className="numeric">{number(p.quantity)}</td><td>{p.currency}</td><td className="numeric">{money(p.market_value, p.currency)}</td></tr>)}</tbody><tfoot><tr><td colSpan={4}>Total investment positions</td><td className="numeric">{money(invested, currency)}</td></tr></tfoot></table>}</div>
       {(activeTab === 'accounts' ? visibleAccounts : visibleHoldings).length === 0 && <p className="empty-state">No {activeTab} in {currency}.</p>}
       <div className="panel-footnote">Values reflect the data currently held in your portfolio.</div></section>
+      <ProductHoldings positions={holdings} />
       <PortfolioHistory key={`${clientId ?? "me"}-${currency}`} clientId={clientId} currency={currency} accounts={accounts} />
       {clientId !== undefined && <details className="panel credentials-panel"><summary>Client login access <span>Manage credentials</span></summary><form onSubmit={saveCredentials} className="credentials-form"><p>Set or reset this client’s credentials for read-only access to their portfolio.</p><div><label>Email<input name="email" type="email" required autoComplete="off" /></label><label>New password<input name="password" type="password" required minLength={8} maxLength={72} autoComplete="new-password" /></label><button disabled={saving} className="button">{saving ? 'Saving…' : 'Save client login'}</button></div><p role="status">{credentialsMessage}</p></form></details>}
     </main>

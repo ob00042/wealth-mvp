@@ -48,6 +48,7 @@ def build_dashboard(client):
                 positions.append(
                     {
                         "security_name": position.security_name,
+                        "provider_product_id": position.provider_product_id,
                         "quantity": position.quantity,
                         "market_value": position.market_value,
                         "currency": position.currency

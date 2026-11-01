@@ -10,6 +10,7 @@ from app.models.position import Position
 from app.utils.auth import hash_password
 from app.models.history import Transaction, AccountValuation
 from seed_history import seed_demo_history
+from seed_products import seed_demo_products
 
 
 def seed_additional_data():
@@ -266,6 +267,7 @@ def seed_additional_data():
         
         db.flush()
         seed_demo_history(db)
+        seed_demo_products(db)
         db.commit()
         print("\n✅ Successfully seeded data!")
         print(f"- Created advisor John Smith")

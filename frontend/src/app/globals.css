@@ -212,3 +212,5 @@ label { display: flex; flex-direction: column; gap: 9px; font-size: 12px; font-w
 @media (max-width: 650px) {
   .valuation-chart svg text { font-size: 23px; }
 }
+.product-metadata { display: flex; flex-wrap: wrap; gap: 24px; padding: 16px 24px; border-top: 1px solid var(--line); background: #f7f9f7; color: #6a7d71; font-size: 11px; }
+.product-metadata strong { color: #274c3c; font-weight: 500; }
