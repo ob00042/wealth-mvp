@@ -515,3 +515,42 @@ The rates endpoint returns 404 when no snapshot precedes the cutoff, 422 for a
 future or malformed date, and 503 for provider unavailability. Portfolio valuation
 continues to preserve unconvertible amounts when a snapshot or quote is missing;
 a provider outage returns 503, which the existing UI displays with Retry.
+
+# Performance analytics (phase 1)
+
+Both roles have a **Performance** section with account/date filters, a return chart,
+monthly/quarterly/yearly period tables, and a summary since the first recorded
+valuation (or the selected range). No migration or seed change is required.
+`GET /clients/{id}/performance?currency=EUR&frequency=monthly` and the `/me` variant
+require ownership access. Optional `account_id`, `start_date`, and `end_date` use
+the same access and validation rules as history. Currency is required.
+
+The calculation uses Decimal and non-annualised Modified Dietz:
+
+- Gain = closing value − opening value − signed external flows.
+- Return = gain / (opening value + sum(flow × days remaining / period days)).
+- Cash flows occur at end of day; the opening date is excluded, closing date
+  included with zero weight. Deposits/withdrawals are external. Trades are internal;
+  dividends/interest and recorded fees remain in net investment gain/loss.
+- For a selected account, transfers cross that account's boundary and are external
+  flows. Portfolio-wide transfer records lack explicit internal/external linkage,
+  so affected portfolio periods are unavailable rather than matched by guessed
+  amounts or counted as contributions. Explicit transfer linking is future work.
+- Every observed interval must reconcile cash separately for every expected account.
+  Missing account valuations, unknown/delayed settlement, negative balances, and
+  ambiguous transfers block results. Nonpositive weighted capital blocks the
+  percentage return. Data issues are returned and shown alongside affected periods.
+- Expected coverage includes current accounts/position currencies and accounts with
+  recorded history/activity in the selected currency. Account opening/closing dates
+  are not modelled. Reconciliation cannot establish completeness of a bank import
+  (for example, omitted offsetting movements can still reconcile).
+- Only snapshots inside the requested range are used. Actual start/end dates are
+  displayed; no valuations are interpolated. Calendar groups with missing boundary
+  dates are labelled partial. The overall return is calculated directly over the
+  full observed span, not summed from monthly returns. This is an approximation,
+  not daily time-weighted return or IRR. Sources label synthetic demo history.
+
+This phase uses original currencies only. Historical FX consolidation, benchmarks,
+annualisation, and PDF reporting remain future work. Tests cover known cash-flow
+examples, boundary timing, income/fees/trades, reconciliation, incomplete coverage,
+transfers, settlement ambiguity, calendar grouping, currency isolation and access.

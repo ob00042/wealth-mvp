@@ -11,7 +11,8 @@ from app.api import (
     history,
     market_data,
     exposure,
-    fx
+    fx,
+    performance
 )
 
 
@@ -58,6 +59,7 @@ app.include_router(history.router)
 app.include_router(market_data.router)
 app.include_router(exposure.router)
 app.include_router(fx.router)
+app.include_router(performance.router)
 app.include_router(fx.rates_router)
 
 

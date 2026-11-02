@@ -9,6 +9,7 @@ import PortfolioHistory from '@/components/PortfolioHistory';
 import ProductHoldings from '@/components/ProductHoldings';
 import PortfolioExposure from '@/components/PortfolioExposure';
 import ReportingValuation from '@/components/ReportingValuation';
+import PortfolioPerformance from '@/components/PortfolioPerformance';
 
 interface Position {
   provider_product_id?: string | null;
@@ -156,6 +157,7 @@ export default function ClientDetails({ clientId }: { clientId?: number }) {
       <div className="panel-footnote">Values reflect the data currently held in your portfolio.</div></section>
       <PortfolioExposure clientId={clientId} currency={currency} />
       <ProductHoldings positions={holdings} />
+      <PortfolioPerformance key={`performance-${clientId ?? "me"}-${currency}`} clientId={clientId} currency={currency} accounts={accounts} />
       <PortfolioHistory key={`${clientId ?? "me"}-${currency}`} clientId={clientId} currency={currency} accounts={accounts} />
       {clientId !== undefined && <details className="panel credentials-panel"><summary>Client login access <span>Manage credentials</span></summary><form onSubmit={saveCredentials} className="credentials-form"><p>Set or reset this client’s credentials for read-only access to their portfolio.</p><div><label>Email<input name="email" type="email" required autoComplete="off" /></label><label>New password<input name="password" type="password" required minLength={8} maxLength={72} autoComplete="new-password" /></label><button disabled={saving} className="button">{saving ? 'Saving…' : 'Save client login'}</button></div><p role="status">{credentialsMessage}</p></form></details>}
     </main>

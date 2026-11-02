@@ -277,3 +277,10 @@ body { font-family: Aptos, Arial, Helvetica, sans-serif; }
 .reporting-caption { text-align: left; padding: 18px 24px; font-size: 12px; }
 .reporting-details > summary { padding: 20px 24px; cursor: pointer; font-size: 12px; }
 @media (max-width: 800px) { .reporting-metrics { grid-template-columns: 1fr; } .reporting-controls { align-items: stretch; } }
+
+.performance-chart { padding: 20px 24px; }
+.performance-chart label { max-width: 260px; }
+.performance-chart > p { margin: 16px 0; font-size: 12px; }
+.performance-chart svg { display: block; width: 100%; min-width: 500px; }
+.performance-chart { overflow-x: auto; }
+.performance-section .panel-footnote { line-height: 1.7; }
