@@ -466,3 +466,52 @@ rather than being silently classified or matched to fictional instruments.
 Regression coverage includes exact aggregation, reconciliation, fund overlap,
 partial holdings, currency separation, dated/stale/missing sources, provider
 outages, repeated products, conflicting metadata and ownership restrictions.
+
+# Reporting currency conversion
+
+Both client and advisor client views include a **Consolidated portfolio** panel.
+Choose EUR, USD, GBP, CHF or JPY to translate all current cash and investment
+positions, retaining original values in a currency breakdown and expandable detail.
+The original-currency detail, fund exposure and history panels remain separate.
+
+`GET /clients/{id}/reporting-valuation?currency=EUR` (or `/clients/me/…`)
+uses the existing ownership checks. Optional `as_of` selects the latest FX snapshot
+on or before that date; future dates and unsupported reporting currencies return 422.
+No migration or seed change is needed.
+
+Rates are explicitly fictional, not Bloomberg or live quotes. The dataset in
+`backend/app/providers/fixtures/fx.json` contains June 30 and September 22, 2026 snapshots,
+quoted as currency units per EUR. Cross rate = target quote / source quote;
+converted value = original value × cross rate. Same-currency translation is 1.
+All calculations use Decimal and totals are calculated before display rounding.
+Dates more than 45 days after the selected snapshot show a stale warning.
+
+A missing rate preserves original values but leaves converted values unavailable;
+the full total is null and the UI labels the known portion as a converted subtotal.
+Zero-value entries do not make totals incomplete. Signed values are preserved.
+This translates current portfolio values, not historical holdings or returns.
+Currency grouping reflects valuation currencies, not underlying economic FX risk.
+Tests cover cross rates, reconciliation, identity conversion, dated/stale/missing
+rates, empty and signed portfolios, validation and ownership isolation.
+
+
+## FX provider API
+
+FX rates now use a replaceable `FxProvider` interface and `FictionalFxProvider`
+fixture adapter, matching the market-data provider architecture. The adapter
+validates positive decimal quotes and a unit base-currency rate at startup.
+
+`GET /market-data/fx/rates?as_of=2026-09-22` requires an advisor or client Bearer
+token and returns base currency, decimal quotes, effective date, requested cutoff,
+source, synthetic flag, supported currencies, age and stale status. Quotes mean
+units of each currency per one unit of the response's base currency.
+
+The reporting-valuation endpoint receives the same provider via dependency
+injection. It does not call its own HTTP endpoint. A future licensed adapter can
+replace the fixture provider without changing portfolio calculations. No external
+network calls, subscriptions or credentials are needed for the demo.
+
+The rates endpoint returns 404 when no snapshot precedes the cutoff, 422 for a
+future or malformed date, and 503 for provider unavailability. Portfolio valuation
+continues to preserve unconvertible amounts when a snapshot or quote is missing;
+a provider outage returns 503, which the existing UI displays with Retry.

@@ -10,7 +10,8 @@ from app.api import (
     advisors,
     history,
     market_data,
-    exposure
+    exposure,
+    fx
 )
 
 
@@ -56,6 +57,8 @@ app.include_router(
 app.include_router(history.router)
 app.include_router(market_data.router)
 app.include_router(exposure.router)
+app.include_router(fx.router)
+app.include_router(fx.rates_router)
 
 
 @app.get("/")

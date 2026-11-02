@@ -269,3 +269,11 @@ body { font-family: Aptos, Arial, Helvetica, sans-serif; }
 .exposure-following { margin-top: 22px; }
 .data-table .exposure-wrap { white-space: normal; min-width: 220px; max-width: 420px; line-height: 1.7; }
 @media (max-width: 900px) { .exposure-allocation-grid { grid-template-columns: 1fr; } }
+
+.reporting-panel { margin-bottom: 28px; }
+.reporting-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 18px; padding: 0 24px 22px; }
+.reporting-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 24px; }
+.reporting-panel > .currency-note { margin: 18px 24px; line-height: 1.7; }
+.reporting-caption { text-align: left; padding: 18px 24px; font-size: 12px; }
+.reporting-details > summary { padding: 20px 24px; cursor: pointer; font-size: 12px; }
+@media (max-width: 800px) { .reporting-metrics { grid-template-columns: 1fr; } .reporting-controls { align-items: stretch; } }

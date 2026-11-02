@@ -1,0 +1,4 @@
+[
+  {"as_of_date": "2026-06-30", "base_currency": "EUR", "rates": {"EUR": "1", "USD": "1.10", "GBP": "0.85", "CHF": "0.95", "JPY": "160"}},
+  {"as_of_date": "2026-09-22", "base_currency": "EUR", "rates": {"EUR": "1", "USD": "1.12", "GBP": "0.84", "CHF": "0.94", "JPY": "164"}}
+]
