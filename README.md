@@ -424,5 +424,45 @@ continue to use the existing ownership checks.
 Fixtures live in `backend/app/providers/fixtures/products.json`. Constituents use
 fractional NAV weights; undisclosed weight stays explicit rather than being
 redistributed. Underlying constituents are not added to account balances, avoiding
-double counting. Combined portfolio exposure analysis and recommendations remain
-future work.
+double counting. Combined portfolio exposure analysis is described below. Recommendations remain
+out of scope.
+
+
+# Combined portfolio exposure
+
+Both roles now see **Portfolio exposure** above Product holdings. No migration or
+new seed is required if the fictional product positions have already been loaded.
+The read-only endpoint is `GET /clients/me/exposure?currency=USD` for clients or
+`GET /clients/{id}/exposure?currency=EUR` for the owning advisor. Optional `as_of`
+is a composition cutoff, not a portfolio valuation date; future dates are rejected.
+
+- Uses current cash and position market values in the selected currency. No FX
+  conversion, historical position reconstruction, or trading is performed.
+- A fund's position value times each disclosed constituent weight is its indirect
+  exposure. Provider-linked stocks with a single 100% constituent are direct
+  exposure. Canonical security IDs combine these across accounts and products.
+  Names/tickers are never used to guess identity; different securities issued by
+  the same company are not automatically combined.
+- Asset-class, sector, and country allocations use total assets as denominator,
+  retaining cash and unresolved investments. Investment coverage excludes cash.
+  Values use Decimal calculations; the UI rounds display values only.
+- Missing mappings/products/snapshots, provider outages and undisclosed fund
+  holdings retain their original value as unresolved. Conflicting classifications
+  are marked unknown. Stale compositions remain included but are flagged.
+- Pairwise fund overlap lists shared disclosed securities and the sum of both
+  funds' exposures to those securities. Pair totals are not additive across pairs.
+- Source details show account, position, composition date, weight and stale status.
+  Search and a multiple-position filter help inspect concentration.
+- This is one-level fund look-through for long positions and non-negative cash.
+  Nested fund recursion, issuer-level consolidation, derivatives/leverage modelling,
+  FX risk, real Bloomberg integration and recommendations are not implemented.
+
+With the September 22, 2026 composition, Jane's Cedar exposure is USD 12,500
+(3,000 direct + 5,000 Atlas + 4,500 Nova). Mister Agapitos's is EUR 14,500
+(5,000 direct + 7,500 Atlas + 2,000 Horizon). Horizon's undisclosed 10% remains
+EUR 2,000 unresolved. Legacy positions without provider mappings remain unresolved
+rather than being silently classified or matched to fictional instruments.
+
+Regression coverage includes exact aggregation, reconciliation, fund overlap,
+partial holdings, currency separation, dated/stale/missing sources, provider
+outages, repeated products, conflicting metadata and ownership restrictions.

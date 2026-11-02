@@ -9,7 +9,8 @@ from app.api import (
     banks,
     advisors,
     history,
-    market_data
+    market_data,
+    exposure
 )
 
 
@@ -54,6 +55,7 @@ app.include_router(
 
 app.include_router(history.router)
 app.include_router(market_data.router)
+app.include_router(exposure.router)
 
 
 @app.get("/")

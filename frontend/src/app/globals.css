@@ -253,3 +253,19 @@ body { font-family: Aptos, Arial, Helvetica, sans-serif; }
 @media (max-width: 1100px) { .brand-caption { display: block; } .login-story { padding: 40px 32px 30px; } .story-copy h1 { font-size: 53px; } }
 @media (max-width: 800px) { .login-layout { grid-template-columns: 1fr; } .login-story { min-height: 470px; padding: 28px; } .story-copy { margin-top: 40px; } .story-copy h1 { font-size: 45px; max-width: 400px; } .story-copy > p:last-child { display: block; max-width: 270px; font-size: 18px; } .mosaic-art { background-size: auto, auto 85%; background-image: linear-gradient(90deg, #001d30 5%, #001d30dd 35%, #001d3030 100%), url('/mosaic/kingfisher.jpg'); } .page-hero h1 { font-size: 36px; } .topbar { min-height: 82px; } }
 @media (max-width: 520px) { .brand-wordmark { font-size: 29px; } .brand-caption { font-size: 8px; letter-spacing: 2px; } .brand img { width: 35px; height: 35px; } .story-copy h1 { font-size: 41px; } .topbar { padding-top: 5px; } .page-hero h1 { font-size: 33px; } }
+
+/* Combined portfolio look-through. */
+.exposure-intro { color: var(--muted); font-size: 12px; line-height: 1.7; margin: 10px 0 18px; }
+.exposure-date-note { font-size: 11px; color: var(--muted); max-width: 360px; line-height: 1.6; }
+.exposure-allocation-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 22px 0; }
+.exposure-bucket-value { display: block; color: var(--muted); font-size: 10px; margin-top: 7px; font-variant-numeric: tabular-nums; }
+.exposure-checkbox { flex-direction: row; align-items: center; padding: 0 24px 20px; font-weight: 400; color: var(--muted); }
+.exposure-checkbox input { accent-color: #19384d; }
+.exposure-sources { min-width: 250px; max-width: 420px; white-space: normal; }
+.exposure-sources summary { color: var(--ink); line-height: 1.6; }
+.exposure-sources ul { list-style: none; margin: 12px 0 0; padding: 0; }
+.exposure-sources li { padding: 10px 0; border-top: 1px solid var(--line); font-size: 11px; line-height: 1.7; }
+.exposure-sources li span { display: block; color: var(--muted); }
+.exposure-following { margin-top: 22px; }
+.data-table .exposure-wrap { white-space: normal; min-width: 220px; max-width: 420px; line-height: 1.7; }
+@media (max-width: 900px) { .exposure-allocation-grid { grid-template-columns: 1fr; } }
